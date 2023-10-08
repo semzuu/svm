@@ -7,4 +7,4 @@ This project is only for learning purposes.
 [X] Algorithmic operations\
 [ ] Reading and writing files\
 [ ] Jump and comparisons\
-[ ] Memory\
+[ ] Memory and registers
