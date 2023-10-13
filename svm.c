@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <stdint.h>
 
 #define MAX_STACK_SIZE 1024
 #define PROG_SIZE (sizeof(prog)/sizeof(INST))
@@ -12,7 +11,13 @@ typedef enum {
     INST_ADD,
     INST_SUB,
     INST_MUL,
-    INST_DIV
+    INST_DIV,
+    INST_CMPE,
+    INST_CMPNE,
+    INST_JMP,
+    INST_JMPZ,
+    INST_JMPNZ,
+    INST_HLT
 } INST_TYPE;
 
 typedef enum {
@@ -24,7 +29,7 @@ typedef enum {
 
 typedef struct {
     INST_TYPE type;
-    uint16_t value;
+    int value;
 }INST;
 
 #define PUSH(x) {.type=INST_PUSH, .value=(x)}
@@ -33,6 +38,12 @@ typedef struct {
 #define SUB() {.type=INST_SUB}
 #define MUL() {.type=INST_MUL}
 #define DIV() {.type=INST_DIV}
+#define CMPE() {.type=INST_CMPE}
+#define CMPNE() {.type=INST_CMPNE}
+#define JMP(x) {.type=INST_JMP, .value=(x)}
+#define JMPZ(x) {.type=INST_JMPZ, .value=(x)}
+#define JMPNZ(x) {.type=INST_JMPNZ, .value=(x)}
+#define HLT() {.type=INST_HLT}
 
 typedef struct {
     int stack_size;
@@ -64,13 +75,11 @@ void write_file(char* filename, INST* prog, int length){
 
 
 INST prog[] = {
-    PUSH(10),
-    PUSH(10),
-    PUSH(5),
-    POP(),
-    ADD(),
+    PUSH(1),
     PUSH(2),
-    MUL()
+    PUSH(1),
+    CMPE(),
+    JMPZ(1)
 };
 
 
@@ -101,7 +110,9 @@ int main(){
     write_file("test.svm", prog, PROG_SIZE);
     INST* program = load_file("test.svm");
 
-    for(int ip=0; ip<PROG_SIZE; ip++){
+    int ip = 0, step;// step is 0 when the ip wasn't modified in the inst, 1 otherwise
+    while (ip < PROG_SIZE){
+        step = 0;
         int a,b;
         switch(program[ip].type){
             case INST_PUSH:
@@ -137,10 +148,46 @@ int main(){
                 if(a==0) {err(ERR_DIV_BY_ZERO);exit(1);}
                 push(&v, b/a);
                 break;
+            case INST_CMPE:
+                assert(v.stack_size>=2);
+                a = pop(&v);
+                b = pop(&v);
+                push(&v, a==b);
+                break;
+            case INST_CMPNE:
+                assert(v.stack_size>=2);
+                a = pop(&v);
+                b = pop(&v);
+                push(&v, a!=b);
+                break;
+            case INST_JMP:
+                ip = program[ip].value;
+                step = 1;
+                break;
+            case INST_JMPZ:
+                if(pop(&v)==0){
+                    ip = program[ip].value;
+                    step = 1;
+                }
+                break;
+            case INST_JMPNZ:
+                if(pop(&v)!=0){
+                    ip = program[ip].value;
+                    step = 1;
+                }
+                break;
+            case INST_HLT:
+                ip = PROG_SIZE;
+                step = 1;
+                break;
         }
+        printf("INST%d:\n", ip);
 
-        for(int i=v.stack_size-1; i>=0; i--) {printf("%d--%d\n",i,v.stack[i]);}
+        if (!step){ ip++; }
+        
+        for(int i=v.stack_size-1; i>=0; i--) {printf("\t%d--%d\n",i,v.stack[i]);}
         printf("\n");
+        sleep(1);
     }
     return 0;
 }
