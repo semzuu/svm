@@ -7,7 +7,7 @@ This project is only for learning purposes.
 [X] Stack (PUSH / POP)
 [X] Algorithmic instruction set (+-*/)\
 [X] Reading and writing files\
-[ ] Expanding instruction set (JMP, CMP, HLT, DUP, SWP)\
+[X] Expanding instruction set (JMP, CMP, HLT, DUP, SWP)\
 [ ] Lexer for basic assembler\
 [ ] Registers (IP, BP, SP, 4 regular-use registers)\
 [ ] Variables (SET)\
