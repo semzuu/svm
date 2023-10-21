@@ -1,54 +1,7 @@
+#include "lexer.h"
+#include "svm.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-
-#define MAX_TOKENS 1000
-
-typedef enum {
-    TYPE_NULL,
-    TYPE_INT,
-    TYPE_PUSH,
-    TYPE_POP,
-    TYPE_ADD,
-    TYPE_SUB,
-    TYPE_MUL,
-    TYPE_DIV,
-    TYPE_MOD,
-    TYPE_CMPE,
-    TYPE_CMPNE,
-    TYPE_CMPL,
-    TYPE_CMPLE,
-    TYPE_CMPG,
-    TYPE_CMPGE,
-    TYPE_JMP,
-    TYPE_JMPZ,
-    TYPE_JMPNZ,
-    TYPE_DUP,
-    TYPE_DUPI,
-    TYPE_SWP,
-    TYPE_SWPI,
-    TYPE_HLT
-} TOKEN_TYPE;
-
-typedef struct {
-    char* text;
-    int index;
-    int character;
-    int line;
-} SOURCE_CODE;
-
-typedef struct {
-    TOKEN_TYPE type;
-    char* text;
-    int character;
-    int line;
-} TOKEN;
-
-typedef struct {
-    TOKEN* tokens;
-    int length;
-} LEXER;
 
 TOKEN new_token(TOKEN_TYPE type, char* text, int character, int line){
     TOKEN temp = {.type=type, .text=text, .character=character, .line=line};
@@ -73,8 +26,44 @@ TOKEN_TYPE check_inst(char* keyword){
         return TYPE_PUSH;
     } else if (strcmp(keyword, "pop")==0){
         return TYPE_POP;
+    } else if (strcmp(keyword, "add")==0){
+        return TYPE_ADD;
+    } else if (strcmp(keyword, "sub")==0){
+        return TYPE_SUB;
+    } else if (strcmp(keyword, "mul")==0){
+        return TYPE_MUL;
+    } else if (strcmp(keyword, "div")==0){
+        return TYPE_DIV;
+    } else if (strcmp(keyword, "mod")==0){
+        return TYPE_MOD;
+    } else if (strcmp(keyword, "cmpe")==0){
+        return TYPE_CMPE;
+    } else if (strcmp(keyword, "cmpne")==0){
+        return TYPE_CMPNE;
+    } else if (strcmp(keyword, "cmpl")==0){
+        return TYPE_CMPL;
+    } else if (strcmp(keyword, "cmple")==0){
+        return TYPE_CMPLE;
+    } else if (strcmp(keyword, "cmpg")==0){
+        return TYPE_CMPG;
+    } else if (strcmp(keyword, "cmpge")==0){
+        return TYPE_CMPGE;
     } else if (strcmp(keyword, "jmp")==0){
         return TYPE_JMP;
+    } else if (strcmp(keyword, "jmpz")==0){
+        return TYPE_JMPZ;
+    } else if (strcmp(keyword, "jmpnz")==0){
+        return TYPE_JMPNZ;
+    } else if (strcmp(keyword, "dup")==0){
+        return TYPE_DUP;
+    } else if (strcmp(keyword, "dupi")==0){
+        return TYPE_DUPI;
+    } else if (strcmp(keyword, "swp")==0){
+        return TYPE_SWP;
+    } else if (strcmp(keyword, "swpi")==0){
+        return TYPE_SWPI;
+    } else if (strcmp(keyword, "hlt")==0){
+        return TYPE_HLT;
     } else {
         return TYPE_NULL;
     }
@@ -136,7 +125,142 @@ void tokenize(SOURCE_CODE src, LEXER* lex){
     }
 }
 
+void generate_code(LEXER lex, VM* vm){
+    INST instruction;
+    int i = 0;
+    while(i < lex.length){
+        switch (lex.tokens[i].type) {
+            case TYPE_NULL:
+                fprintf(stderr, "SYNTAX_ERR\n");
+                exit(1);
+                break;
+            case TYPE_INT:
+                fprintf(stderr, "SYNTAX_ERR\n");
+                exit(1);
+                break;
+            case TYPE_PUSH:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_PUSH;
+                break;
+            case TYPE_POP:
+                instruction.type = INST_POP;
+                instruction.value = 0;
+                break;
+            case TYPE_ADD:
+                instruction.type = INST_ADD;
+                instruction.value = 0;
+                break;
+            case TYPE_SUB:
+                instruction.type = INST_SUB;
+                instruction.value = 0;
+                break;
+            case TYPE_MUL:
+                instruction.type = INST_MUL;
+                instruction.value = 0;
+                break;
+            case TYPE_DIV:
+                instruction.type = INST_DIV;
+                instruction.value = 0;
+                break;
+            case TYPE_MOD:
+                instruction.type = INST_MOD;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPE:
+                instruction.type = INST_CMPE;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPNE:
+                instruction.type = INST_CMPNE;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPL:
+                instruction.type = INST_CMPL;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPLE:
+                instruction.type = INST_CMPLE;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPG:
+                instruction.type = INST_CMPG;
+                instruction.value = 0;
+                break;
+            case TYPE_CMPGE:
+                instruction.type = INST_CMPGE;
+                instruction.value = 0;
+                break;
+            case TYPE_JMP:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_JMP;
+                break;
+            case TYPE_JMPZ:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_JMPZ;
+                break;
+            case TYPE_JMPNZ:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_JMPNZ;
+                break;
+            case TYPE_DUP:
+                instruction.type = INST_DUP;
+                instruction.value = 0;
+                break;
+            case TYPE_DUPI:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_DUPI;
+                break;
+            case TYPE_SWP:
+                instruction.type = INST_SWP;
+                instruction.value = 0;
+                break;
+            case TYPE_SWPI:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_SWPI;
+                break;
+            case TYPE_HLT:
+                instruction.type = INST_HLT;
+                instruction.value = 0;
+                break;
+        }
+        i++;
+        vm->program[vm->program_size] = instruction;
+        vm->program_size+=1;
+    }
+}
+
 #define print_token(x) printf("[%d:%d] %s\n", (x).line, (x).character, (x).text)
+#define print_inst(inst, value) printf("TYPE: %d  VALUE: %d\n", inst, value);
 
 void print_tokens(LEXER lex){
     for(int i = 0; i < lex.length; i++){
@@ -144,14 +268,39 @@ void print_tokens(LEXER lex){
     }
 }
 
+void print_insts(INST* prog){
+    for(int i = 0; i < 3; i++){
+        print_inst(prog[i].type, prog[i].value);
+    }
+}
+
+SOURCE_CODE new_code(){
+    SOURCE_CODE temp;
+    temp.line = 0;
+    temp.character = 0;
+    temp.index = 0;
+    temp.text = NULL;
+    return temp;
+}
+
+void new_lexer(LEXER* lex){
+    lex->length = 0;
+    lex->tokens = (TOKEN*) malloc(sizeof(TOKEN)*MAX_TOKENS);
+}
+/*
 int main(){
-    SOURCE_CODE src = {.index = 0, .character = 0, .line = 0};
+    SOURCE_CODE src = new_code();
     src.text = load_file("test.sasm");
     LEXER lex;
-    lex.tokens = (TOKEN*) malloc(sizeof(TOKEN)*MAX_TOKENS);
-    lex.length = 0;
+    new_lexer(&lex);
     tokenize(src, &lex);
-    printf("%d\n",lex.length);
-    print_tokens(lex);
+    //printf("%d\n",lex.length);
+    //print_tokens(lex);
+    VM v;
+    new_VM(&v);
+    generate_code(lex, &v);
+    print_insts(v.program);
+    execute_prog(&v);
+
     return 0;
-}
+}*/

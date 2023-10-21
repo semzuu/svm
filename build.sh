@@ -1,5 +1,4 @@
 #!/bin/sh
 
-#gcc svm.c -o svm 
-gcc lexer.c -o lexer
+gcc svm.c lexer.c main.c -g -o main
 

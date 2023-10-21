@@ -1,75 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <stdint.h>
-
-#define MAX_STACK_SIZE 1024
-#define PROG_SIZE (sizeof(prog)/sizeof(INST))
-
-typedef enum {
-    INST_PUSH,
-    INST_POP,
-    INST_ADD,
-    INST_SUB,
-    INST_MUL,
-    INST_DIV,
-    INST_MOD,
-    INST_CMPE,
-    INST_CMPNE,
-    INST_CMPL,
-    INST_CMPLE,
-    INST_CMPG,
-    INST_CMPGE,
-    INST_JMP,
-    INST_JMPZ,
-    INST_JMPNZ,
-    INST_DUP,
-    INST_DUPI,
-    INST_SWP,
-    INST_SWPI,
-    INST_HLT
-} INST_TYPE;
-
-typedef enum {
-    ERR_DIV_BY_ZERO,
-    ERR_STACK_EMPTY,
-    ERR_STACK_FULL,
-    ERR_FILE_NOT_FOUND
-} ERR;
-
-typedef struct {
-    INST_TYPE type;
-    int16_t value;
-}INST;
-
-#define PUSH(x)  {.type=INST_PUSH, .value=(x)}
-#define POP()    {.type=INST_POP}
-#define ADD()    {.type=INST_ADD}
-#define SUB()    {.type=INST_SUB}
-#define MUL()    {.type=INST_MUL}
-#define DIV()    {.type=INST_DIV}
-#define MOD()    {.type=INST_MOD}
-#define CMPE()   {.type=INST_CMPE}
-#define CMPNE()  {.type=INST_CMPNE}
-#define CMPL()   {.type=INST_CMPL}
-#define CMPLE()  {.type=INST_CMPLE}
-#define CMPG()   {.type=INST_CMPG}
-#define CMPGE()  {.type=INST_CMPGE}
-#define JMP(x)   {.type=INST_JMP, .value=(x)}
-#define JMPZ(x)  {.type=INST_JMPZ, .value=(x)}
-#define JMPNZ(x) {.type=INST_JMPNZ, .value=(x)}
-#define DUP()    {.type=INST_DUP}
-#define DUPI(x)  {.type=INST_DUPI, .value=(x)}
-#define SWP()    {.type=INST_SWP}
-#define SWPI(x)  {.type=INST_SWPI, .value=(x)}
-#define HLT()    {.type=INST_HLT}
-
-typedef struct {
-    int16_t stack_size;
-    int16_t* stack;
-    int16_t ip;
-    INST* program;
-} VM;
+#include "svm.h"
 
 INST* load_prog(char* filename){
     FILE* f = fopen(filename, "rb");
@@ -120,11 +49,11 @@ char* err_to_string(ERR type){
     }
 }
 
-void execute(VM* v){
+void execute_prog(VM* v){
     int step;// step is 0 when the ip wasn't modified in the inst, 1 otherwise
-    while (v->ip < PROG_SIZE){
+    while (v->ip < v->program_size){
         step = 0;
-        uint16_t a,b;
+        int16_t a,b;
         switch(v->program[v->ip].type){
             case INST_PUSH:
                 if ( v->stack_size == MAX_STACK_SIZE ) { err(ERR_STACK_FULL); exit(1);}
@@ -241,21 +170,32 @@ void execute(VM* v){
         }
         printf("INST%d:\n", v->ip);
 
+    for(int i=v->stack_size-1; i>=0; i--) {printf("\t%d--%d\n",i,v->stack[i]);}
+    printf("\n");
         if (!step){ v->ip++; }
     }
 }
 
-#define err(type) fprintf(stderr, "%s\n", err_to_string(type))
+void new_VM(VM* vm){
+    vm->stack_size = 0; 
+    vm->stack = (int16_t*) malloc(sizeof(int16_t)*MAX_STACK_SIZE);
+    vm->ip = 0;
+    vm->program_size = 0;
+    vm->program = (INST*) malloc(sizeof(INST)*MAX_PROG_SIZE);
+}
 
+/*
 int main(){
-    VM v = {.stack_size=0, .stack=(uint16_t*) malloc(sizeof(uint16_t)*MAX_STACK_SIZE), .ip=0 };
+    VM v;
+    create_VM(&v);
 
     write_prog("test.svm", prog, PROG_SIZE);
     v.program = load_prog("test.svm");
 
-    execute(&v);
+    execute_prog(&v);
 
     for(int i=v.stack_size-1; i>=0; i--) {printf("\t%d--%d\n",i,v.stack[i]);}
     printf("\n");
     return 0;
 }
+*/
