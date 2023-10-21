@@ -9,7 +9,7 @@ This project is only for learning purposes.
 [X] Reading and writing files\
 [X] Expanding instruction set (JMP, CMP, HLT, DUP, SWP)\
 [X] Lexer for basic assembler\
-[ ] Logical instruction set (AND, OR, XOR, SHL, SHR, ROL, ROR)\
+[X] Logical instruction set (NOT, AND, OR, XOR, SHL, SHR, ROL, ROR)\
 [ ] Data types (INT, FLOAT, CHAR, STRING?)\
 [ ] Adding labels and call stack(JMP to labels, RET)\
 [ ] Variables (SET)\
