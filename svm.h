@@ -18,6 +18,14 @@ typedef enum {
     INST_MUL,
     INST_DIV,
     INST_MOD,
+    INST_NOT,
+    INST_AND,
+    INST_OR,
+    INST_XOR,
+    INST_SHL,
+    INST_SHR,
+    INST_ROL,
+    INST_ROR,
     INST_CMPE,
     INST_CMPNE,
     INST_CMPL,
@@ -41,6 +49,14 @@ typedef enum {
 #define MUL()    {.type=INST_MUL}
 #define DIV()    {.type=INST_DIV}
 #define MOD()    {.type=INST_MOD}
+#define NOT()    {.type=INST_NOT}
+#define AND()    {.type=INST_AND}
+#define OR()     {.type=INST_OR}
+#define XOR()    {.type=INST_XOR}
+#define SHL(x)   {.type=INST_SHL, .value=(x)}
+#define SHR(x)   {.type=INST_SHR, .value=(x)}
+#define ROL(x)   {.type=INST_ROL, .value=(x)}
+#define ROR(x)   {.type=INST_ROR, .value=(x)}
 #define CMPE()   {.type=INST_CMPE}
 #define CMPNE()  {.type=INST_CMPNE}
 #define CMPL()   {.type=INST_CMPL}

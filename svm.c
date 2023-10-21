@@ -95,6 +95,49 @@ void execute_prog(VM* v){
                 if(a==0) {err(ERR_DIV_BY_ZERO);exit(1);}
                 push(v, a%b);
                 break;
+            case INST_NOT:
+                assert(v->stack_size>=1);
+                a = pop(v);
+                push(v, ~a);
+                break;
+            case INST_AND:
+                assert(v->stack_size>=2);
+                a = pop(v);
+                b = pop(v);
+                push(v, a&b);
+                break;
+            case INST_OR:
+                assert(v->stack_size>=2);
+                a = pop(v);
+                b = pop(v);
+                push(v, a|b);
+                break;
+            case INST_XOR:
+                assert(v->stack_size>=2);
+                a = pop(v);
+                b = pop(v);
+                push(v, a^b);
+                break;
+            case INST_SHL:
+                assert(v->stack_size>=1);
+                a = pop(v);
+                push(v, a<<v->program[v->ip].value);
+                break;
+            case INST_SHR:
+                assert(v->stack_size>=1);
+                a = pop(v);
+                push(v, a>>v->program[v->ip].value);
+                break;
+            case INST_ROL:
+                assert(v->stack_size>=1);
+                a = pop(v);
+                push(v, (a<<v->program[v->ip].value)|(a>>(sizeof(a)-v->program[v->ip].value)));
+                break;
+            case INST_ROR:
+                assert(v->stack_size>=1);
+                a = pop(v);
+                push(v, (a>>v->program[v->ip].value)|(a<<(sizeof(a)-v->program[v->ip].value)));
+                break;
             case INST_CMPE:
                 assert(v->stack_size>=2);
                 a = pop(v);

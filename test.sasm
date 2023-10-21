@@ -1,7 +1,5 @@
 push 2
 push 5
-sub
-push 2
-dup
-cmpe
-jmpz 0
+and
+not
+shl 3

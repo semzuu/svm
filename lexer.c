@@ -36,6 +36,22 @@ TOKEN_TYPE check_inst(char* keyword){
         return TYPE_DIV;
     } else if (strcmp(keyword, "mod")==0){
         return TYPE_MOD;
+    } else if (strcmp(keyword, "not")==0){
+        return TYPE_NOT;
+    } else if (strcmp(keyword, "and")==0){
+        return TYPE_AND;
+    } else if (strcmp(keyword, "or")==0){
+        return TYPE_OR;
+    } else if (strcmp(keyword, "xor")==0){
+        return TYPE_XOR;
+    } else if (strcmp(keyword, "shl")==0){
+        return TYPE_SHL;
+    } else if (strcmp(keyword, "shr")==0){
+        return TYPE_SHR;
+    } else if (strcmp(keyword, "rol")==0){
+        return TYPE_ROL;
+    } else if (strcmp(keyword, "ror")==0){
+        return TYPE_ROR;
     } else if (strcmp(keyword, "cmpe")==0){
         return TYPE_CMPE;
     } else if (strcmp(keyword, "cmpne")==0){
@@ -170,6 +186,58 @@ void generate_code(LEXER lex, VM* vm){
             case TYPE_MOD:
                 instruction.type = INST_MOD;
                 instruction.value = 0;
+                break;
+            case TYPE_NOT:
+                instruction.type = INST_NOT;
+                instruction.value = 0;
+                break;
+            case TYPE_AND:
+                instruction.type = INST_AND;
+                instruction.value = 0;
+                break;
+            case TYPE_OR:
+                instruction.type = INST_OR;
+                instruction.value = 0;
+                break;
+            case TYPE_XOR:
+                instruction.type = INST_XOR;
+                instruction.value = 0;
+                break;
+            case TYPE_SHL:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_SHL;
+                break;
+            case TYPE_SHR:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_SHR;
+                break;
+            case TYPE_ROL:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_ROL;
+                break;
+            case TYPE_ROR:
+                i++;
+                if (lex.tokens[i].type != TYPE_INT) {
+                    fprintf(stderr, "NOT_EXPECTED_TYPE\n");
+                    exit(1);
+                }
+                instruction.value = atoi(lex.tokens[i].text);
+                instruction.type = INST_ROR;
                 break;
             case TYPE_CMPE:
                 instruction.type = INST_CMPE;
