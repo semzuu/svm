@@ -1,0 +1,18 @@
+push 10
+push 68
+push 76
+push 82
+push 79
+push 87
+push 32
+push 79
+push 76
+push 76
+push 69
+push 72
+push 10
+readc
+dup
+push 10
+cmpg
+jmpz 13

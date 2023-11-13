@@ -10,9 +10,9 @@ This project is only for learning purposes.
 [X] Expanding instruction set (JMP, CMP, HLT, DUP, SWP)\
 [X] Lexer for basic assembler\
 [X] Logical instruction set (NOT, AND, OR, XOR, SHL, SHR, ROL, ROR)\
+[ ] I/O (READ, WRITE)\
 [ ] Data types (INT, FLOAT, CHAR, STRING?)\
 [ ] Adding labels and call stack(JMP to labels, RET)\
 [ ] Variables (SET)\
-[ ] I/O (READ, WRITE)\
 [ ] Registers (IP, BP, SP, 4 regular-use registers)\
 [ ] Basic memory
